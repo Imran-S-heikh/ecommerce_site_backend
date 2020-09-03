@@ -30,7 +30,7 @@ const productSchema = new mongoose.Schema({
         type: String,
         enum: ['XS', 'S', 'M', 'L', 'XL']
     }],
-    color: String,
+    color: [String],
     image: {
         small: [mongoose.Schema.Types.Mixed],
         card: [mongoose.Schema.Types.Mixed],

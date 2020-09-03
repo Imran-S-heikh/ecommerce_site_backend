@@ -7,7 +7,8 @@ const router = express.Router();
 
 
 router.route('/')
-      .post(authenticate,checkModerator,createProduct)
+      // .post(authenticate,checkModerator,createProduct)
+      .post(createProduct)
       .get(getProducts);
     
 router.route('/:id')
