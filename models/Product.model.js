@@ -23,14 +23,17 @@ const productSchema = new mongoose.Schema({
         required: [true, 'How many product do you have?']
     },
     brand: String,
-    model: String,
+    variantCode: String,
     sold: Number,
     basePrice: Number,
     size: [{
         type: String,
         enum: ['XS', 'S', 'M', 'L', 'XL']
     }],
-    color: [String],
+    color: [{
+        value: String,
+        label: String
+    }],
     image: {
         small: [mongoose.Schema.Types.Mixed],
         card: [mongoose.Schema.Types.Mixed],

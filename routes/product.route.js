@@ -13,7 +13,8 @@ router.route('/')
     
 router.route('/:id')
       .get(getSingleProduct)
-      .patch(authenticate,checkModerator,updateProduct)
+      // .patch(authenticate,checkModerator,updateProduct)
+      .patch(updateProduct)
       .delete(/* Deactivate Certain Product*/)
 
 module.exports = router;
