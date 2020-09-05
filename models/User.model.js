@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
+const crypto = require('crypto');
 
 const userSchema = new mongoose.Schema({
     name: {
@@ -41,7 +42,9 @@ const userSchema = new mongoose.Schema({
         ref: 'Product'
     }],
     totalTransaction: Number,
-    transaction: Number
+    transaction: Number,
+    passwordResetToken: String,
+    passwordResetExpire: Date
 });
 
 userSchema.pre('save',async function(next){
@@ -55,6 +58,17 @@ userSchema.pre('save',async function(next){
 
 userSchema.methods.checkPassword = async function(givenPassword,storedPassword){
     return await bcrypt.compare(givenPassword,storedPassword);
+}
+
+userSchema.methods.createPasswordResetToken = function () {
+    const resetToken = crypto.randomBytes(32).toString('hex');
+
+    this.passwordResetToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    this.passwordResetExpire = Date.now() + 30 * 60 * 1000;
+
+    console.log({token: resetToken,hashedToken: this.passwordResetToken})
+
+    return resetToken;
 }
 
 
