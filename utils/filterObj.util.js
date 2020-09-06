@@ -1,7 +1,9 @@
 function filter(obj,...fields) {
     const newObj = {};
     fields.forEach(field=>{
-        newObj[field] = obj[field]
+        if(obj[field]){
+            newObj[field] = obj[field]
+        }
     });
 
     return newObj;

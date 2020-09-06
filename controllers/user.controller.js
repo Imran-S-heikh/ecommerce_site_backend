@@ -39,6 +39,10 @@ exports.getAllUser = catchAsync(async (req, res, next) => {
 
 exports.updateUser = catchAsync(async (req, res, next) => {
     const userData = filter(req.body, 'name', 'password', 'email');
+
+    if(Object.keys(userData).length === 0)return next(new AppError('You can only change Name Password and Email',401))
+
+
     const updatedUser = await User.findByIdAndUpdate(req.params.id, userData, { new: true });
 
     if (!updatedUser) return next(new AppError('User not Found', 404));
@@ -50,7 +54,12 @@ exports.updateUser = catchAsync(async (req, res, next) => {
 });
 
 exports.updateAdmin = catchAsync(async (req, res, next) => {
-    const updatedAdmin = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const filteredObject = filter(req.body,'role');
+    console.log({filteredObject})
+
+    if(Object.keys(filteredObject).length === 0)return next(new AppError('You can only change role',401))
+
+    const updatedAdmin = await User.findByIdAndUpdate(req.params.id, filteredObject, { new: true });
 
     if (!updatedAdmin) return next(new AppError('User not Found', 404));
 
