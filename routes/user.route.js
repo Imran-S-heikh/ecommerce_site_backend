@@ -1,6 +1,6 @@
 const express = require('express');
 const { signUp, signIn, authenticate, checkAdmin } = require('../controllers/auth.controller');
-const { updateUser, updateAdmin, getAllUser, sendUser, forgetPassword, resetPassword } = require('../controllers/user.controller');
+const { updateUser, updateAdmin, getAllUser, sendUser, forgetPassword, resetPassword, userSearch, getUser } = require('../controllers/user.controller');
 
 
 const router = express.Router();
@@ -8,14 +8,17 @@ const router = express.Router();
 
 router.route('/')
     .post(authenticate,sendUser)
-    .get(authenticate,getAllUser);
+    .get(userSearch)
+    // .patch();
 
 router.route('/:id')
-    .get(/*'Get single user'*/)
-    .patch(authenticate,updateUser)
+    .get(getUser)
+    // .patch(authenticate,updateUser)
+    .patch(updateUser)
     .delete(/* Deactivate Certain user*/);
 
-router.patch('/update-admin/:id',authenticate,checkAdmin,updateAdmin);
+// router.patch('/update-admin/:id',authenticate,checkAdmin,updateAdmin);
+router.patch('/update-admin/:id',updateAdmin);
 
 router.post('/signup',signUp);
 router.post('/login',signIn);

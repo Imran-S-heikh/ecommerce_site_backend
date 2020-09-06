@@ -5,11 +5,14 @@ const filter = require("../utils/filterObj.util");
 const sendEmail = require("../utils/email");
 const crypto = require('crypto');
 const createToken = require("../utils/createToken");
+const ApiFeatures = require("../utils/apiFeatures");
 
 
 
 exports.getUser = catchAsync(async (req, res, next) => {
     const user = await User.findById(req.params.id)
+
+    if(!user)return next(new AppError('User not found',404))
 
     res.status(200).json({
         status: 'success',
@@ -124,4 +127,16 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
         user
     });
 
+});
+
+exports.userSearch = catchAsync( async(req,res,next)=>{
+    const features = new ApiFeatures(User.find(),req.query).search().select('name email')
+    const users    = await features.query;
+
+    if(!users)return next(new AppError('Failed to get users',500))
+
+    res.status(200).json({
+        status: 'success',
+        users
+    })
 });

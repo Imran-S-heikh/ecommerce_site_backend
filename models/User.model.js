@@ -7,8 +7,9 @@ const userSchema = new mongoose.Schema({
         type: String,
         require: true
     },
+    avatar: String,
     role: {
-        type: [String],
+        type: String,
         default: 'user',
         enum: ['user','admin','moderator']
     },
@@ -46,6 +47,8 @@ const userSchema = new mongoose.Schema({
     passwordResetToken: String,
     passwordResetExpire: Date
 });
+
+userSchema.index({'name': 'text','email':'text'});
 
 userSchema.pre('save',async function(next){
     if (!this.isModified('password')) return next();

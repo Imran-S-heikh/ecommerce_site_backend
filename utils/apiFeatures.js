@@ -38,6 +38,20 @@ class ApiFeatures{
 
         return this;
     }
+
+    search(){
+        const queryObj = {...this.queryString};
+        if(queryObj.search){
+            this.query = this.query.find({$text: {$search: queryObj.search}})
+        }
+
+        return this
+    }
+
+    select(str){
+        this.query = this.query.select(str)
+        return this
+    }
 }
 
 
