@@ -36,9 +36,12 @@ exports.createProduct = catchAsync(async function (req, res, next) {
 exports.getProducts = catchAsync(async function (req, res, next) {
     const features = new ApiFeatures(Product.find(), req.query).filter().sort().paginate();
     const products = await features.query;
+    const count = await Product.countDocuments();
 
     res.status(200).json({
         status: 'success',
+        total: count,
+        length: products.length,
         products
     });
 });

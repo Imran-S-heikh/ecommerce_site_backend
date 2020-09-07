@@ -37,6 +37,17 @@ exports.getAllUser = catchAsync(async (req, res, next) => {
     })
 });
 
+exports.getAllAdmin = catchAsync(async (req, res, next) => {
+    const admins = await User.find({role: { $in: ['admin','moderator']}});
+
+    if(!admins) return next(new AppError('No admins found',404))
+
+    res.status(200).json({
+        status: 'success',
+        admins
+    })
+});
+
 exports.updateUser = catchAsync(async (req, res, next) => {
     const userData = filter(req.body, 'name', 'password', 'email');
 
