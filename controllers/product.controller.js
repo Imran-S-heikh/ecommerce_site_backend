@@ -34,6 +34,7 @@ exports.createProduct = catchAsync(async function (req, res, next) {
 });
 
 exports.getProducts = catchAsync(async function (req, res, next) {
+    console.log(req.query)
     const features = new ApiFeatures(Product.find(), req.query).filter().sort().paginate();
     const products = await features.query;
     const count = await Product.countDocuments();
