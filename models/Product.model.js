@@ -19,7 +19,7 @@ const productSchema = new mongoose.Schema({
     catagory: [String],
     tags: [String],
     quantity: {
-        type: String,
+        type: Number,
         required: [true, 'How many product do you have?']
     },
     brand: String,

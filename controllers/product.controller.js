@@ -21,7 +21,7 @@ exports.createProduct = catchAsync(async function (req, res, next) {
 
 
     pd.image = { small, card, original }
-    const filterBy = ['name', 'price', 'currentPrice', 'basePrice', 'brand', 'catagory', 'image', 'description', 'productCode', 'productType', 'tags', 'quantity', 'nodel', 'size', 'color', 'variant']
+    const filterBy = ['name', 'price', 'currentPrice', 'basePrice', 'brand', 'catagory', 'image', 'description', 'productCode', 'productType', 'tags', 'quantity', 'nodel', 'size', 'color', 'variant','title']
 
     const filteredProduct = filter(pd, ...filterBy)
 
