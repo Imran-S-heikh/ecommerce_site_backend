@@ -4,6 +4,9 @@ const ApiFeatures = require("../utils/apiFeatures");
 const uploadImage = require("../utils/upload");
 const filter = require("../utils/filterObj.util");
 const mergeObject = require("../utils/mergeObject");
+const AppError = require("../utils/appError.util");
+const Order = require("../models/Orders.model");
+const stripe = require('stripe')(process.env.STRIPE_SECRET)
 
 const [s, c] = [[100, 125], [280, 350]];
 
@@ -79,5 +82,45 @@ exports.updateProduct = catchAsync(async function (req, res, next) {
     res.status(200).json({
         status: 'success',
         product: updatedProduct
+    })
+});
+
+exports.checkout = catchAsync(async (req,res,next)=>{
+    const {paymentMethod,address,country,state} = req.body;
+    const products = await Product.find().where('_id').in(req.body.products.map(item=>item.id)).exec();
+
+    if(!products)return next(new AppError('No Products Found',404));
+
+    const orderProducts = [];
+    let totalProduct = 0
+    let totalPrice = 0;
+    const orderBy = '5f544cc5e676c51c34d827c9';
+
+    products.map(product=>{
+        const count = req.body.products.filter(item=>item.id == product._id)[0].quantity || 1;
+
+        const subTotal = product.price * count;
+        totalProduct = totalProduct + count;
+        totalPrice = subTotal + totalPrice;
+        orderProducts.push({subTotal,quantity: count,product: product._id})
+    });
+
+    const orderData = {
+        totalProduct,
+        totalPrice,
+        products: orderProducts,
+        orderBy,
+        orderedAt: new Date(),
+        paymentMethod,
+        address,
+        country,
+        state
+    }
+
+    const order = await Order.create(orderData);
+
+    res.status(200).json({
+        status: 'success',
+        order
     })
 });
