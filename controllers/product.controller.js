@@ -123,8 +123,8 @@ exports.checkout = catchAsync(async (req, res, next) => {
 
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
-        success_url: `${req.protocol}://${req.headers.origin}`,
-        cancel_url: `${req.protocol}://${req.headers.origin}`,
+        success_url: `${req.headers.origin}`,
+        cancel_url: `${req.headers.origin}`,
         customer_email: req.body.email,
         client_reference_id: String(order._id),
         line_items
