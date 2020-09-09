@@ -6,7 +6,7 @@ const { authenticate, checkModerator } = require('../controllers/auth.controller
 const router = express.Router();
 
 
-router.get('/checkout',checkout);
+router.post('/checkout',checkout);
 router.route('/')
 // .post(authenticate,checkModerator,createProduct)
 .post(createProduct)

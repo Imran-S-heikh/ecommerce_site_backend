@@ -24,7 +24,7 @@ exports.createProduct = catchAsync(async function (req, res, next) {
 
 
     pd.image = { small, card, original }
-    const filterBy = ['name', 'price', 'currentPrice', 'basePrice', 'brand', 'catagory', 'image', 'description', 'productCode', 'productType', 'tags', 'quantity', 'nodel', 'size', 'color', 'variant','title']
+    const filterBy = ['name', 'price', 'currentPrice', 'basePrice', 'brand', 'catagory', 'image', 'description', 'productCode', 'productType', 'tags', 'quantity', 'nodel', 'size', 'color', 'variant', 'title']
 
     const filteredProduct = filter(pd, ...filterBy)
 
@@ -63,15 +63,15 @@ exports.getSingleProduct = catchAsync(async function (req, res, next) {
 exports.updateProduct = catchAsync(async function (req, res, next) {
     let imageObject = req.body.imageObject;
     console.log(req.body)
-    const newImage = req.body.image.filter((img)=>!img.includes('https://'))
+    const newImage = req.body.image.filter((img) => !img.includes('https://'))
 
-    if(newImage.length !== 0){
+    if (newImage.length !== 0) {
         const small = await Promise.all(newImage.map(async img => (await uploadImage(img, { width: 100 })).secure_url))
         const card = await Promise.all(newImage.map(async img => (await uploadImage(img, { width: 280 })).secure_url))
         const original = await Promise.all(newImage.map(async img => (await uploadImage(img)).secure_url))
 
 
-        imageObject = mergeObject(imageObject,{small,card,original})
+        imageObject = mergeObject(imageObject, { small, card, original })
 
     }
 
@@ -85,24 +85,26 @@ exports.updateProduct = catchAsync(async function (req, res, next) {
     })
 });
 
-exports.checkout = catchAsync(async (req,res,next)=>{
-    const {paymentMethod,address,country,state} = req.body;
-    const products = await Product.find().where('_id').in(req.body.products.map(item=>item.id)).exec();
+exports.checkout = catchAsync(async (req, res, next) => {
+    const { paymentMethod, address, country, state } = req.body;
+    const products = await Product.find().where('_id').in(req.body.products.map(item => item.id)).exec();
 
-    if(!products)return next(new AppError('No Products Found',404));
+    if (!products) return next(new AppError('No Products Found', 404));
 
     const orderProducts = [];
+    const line_items = [];
     let totalProduct = 0
     let totalPrice = 0;
     const orderBy = '5f544cc5e676c51c34d827c9';
 
-    products.map(product=>{
-        const count = req.body.products.filter(item=>item.id == product._id)[0].quantity || 1;
+    products.map(product => {
+        const count = req.body.products.filter(item => item.id == product._id)[0].quantity || 1;
 
         const subTotal = product.price * count;
         totalProduct = totalProduct + count;
         totalPrice = subTotal + totalPrice;
-        orderProducts.push({subTotal,quantity: count,product: product._id})
+        line_items.push({name: product.name,description: product.description,images: [product.image.small[0]],amount: product.price * 100,currency: 'usd',quantity: count})
+        orderProducts.push({ subTotal, quantity: count, product: product._id, price: product.price })
     });
 
     const orderData = {
@@ -119,8 +121,19 @@ exports.checkout = catchAsync(async (req,res,next)=>{
 
     const order = await Order.create(orderData);
 
+    const session = await stripe.checkout.sessions.create({
+        payment_method_types: ['card'],
+        success_url: `${req.protocol}://${req.headers.origin}`,
+        cancel_url: `${req.protocol}://${req.headers.origin}`,
+        customer_email: req.body.email,
+        client_reference_id: String(order._id),
+        line_items
+    })
+
+    console.log(`${req.protocol}://${req.get('host')}`)
+
     res.status(200).json({
         status: 'success',
-        order
+        session
     })
 });
