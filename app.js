@@ -4,6 +4,7 @@ const globalErrorhandler = require('./controllers/error.controller');
 const userRoute = require('./routes/user.route');
 const productRoute = require('./routes/product.route');
 const otherRoute = require('./routes/other.route');
+const orderRoute = require('./routes/order.route');
 const cors = require('cors');
 var bodyParser = require('body-parser')
 
@@ -35,6 +36,7 @@ app.use((req,res,next)=>{
 
 app.use('/api/v1/products', productRoute);
 app.use('/api/v1/users', userRoute);
+app.use('/api/v1/orders', orderRoute);
 app.use('/api/v1/others', otherRoute);
 
 

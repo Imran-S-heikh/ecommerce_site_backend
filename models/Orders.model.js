@@ -34,6 +34,11 @@ const orderSchema = new mongoose.Schema({
     state: String
 });
 
+orderSchema.pre(/^find/,function (next) {
+    this.populate({path: 'orderBy',select: 'name email'}).populate({path: 'products.product',select: 'name image'})
+    next();
+})
+
 const Order = mongoose.model('Order', orderSchema);
 
 module.exports = Order;

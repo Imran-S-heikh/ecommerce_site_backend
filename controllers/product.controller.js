@@ -111,7 +111,7 @@ exports.checkout = catchAsync(async (req, res, next) => {
         totalProduct,
         totalPrice,
         products: orderProducts,
-        orderBy,
+        orderBy: req.user._id,
         orderedAt: new Date(),
         paymentMethod,
         address,
@@ -123,9 +123,9 @@ exports.checkout = catchAsync(async (req, res, next) => {
 
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
-        success_url: `${req.headers.origin}`,
+        success_url: `${req.headers.origin}/paymentSuccess/${order._id}`,
         cancel_url: `${req.headers.origin}`,
-        customer_email: req.body.email,
+        customer_email: req.user.email,
         client_reference_id: String(order._id),
         line_items
     })

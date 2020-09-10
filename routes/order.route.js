@@ -1,22 +1,22 @@
 const express = require('express');
 const { createProduct,getProducts, getSingleProduct, updateProduct, checkout } = require('../controllers/product.controller');
 const { authenticate, checkModerator } = require('../controllers/auth.controller');
+const { getOrders, updateOrder } = require('../controllers/order.controller');
 
 
 const router = express.Router();
 
 
-router.post('/checkout',authenticate,checkout);
 router.route('/')
 // .post(authenticate,checkModerator,createProduct)
-.post(createProduct)
-.get(getProducts);
+// .post(createProduct)
+.get(getOrders);
 
 router.route('/:id')
-.get(getSingleProduct)
-// .patch(authenticate,checkModerator,updateProduct)
-.patch(updateProduct)
-.delete(/* Deactivate Certain Product*/)
+// .post(authenticate,checkModerator,createProduct)
+// .post(createProduct)
+.post(updateOrder);
+
 
 
 module.exports = router;
