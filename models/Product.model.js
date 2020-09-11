@@ -54,6 +54,18 @@ const productSchema = new mongoose.Schema({
     description: String
 });
 
+productSchema.index({
+    'name': 'text',
+    'productCode':'text',
+    'brand': 'text',
+    'title': 'text',
+    'catagory': 'text',
+    'tags': 'text',
+    'productType': 'text',
+    'variantCode': 'text'
+});
+
+
 const Product = mongoose.model('Product',productSchema);
 
 module.exports = Product;

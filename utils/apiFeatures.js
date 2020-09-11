@@ -6,7 +6,7 @@ class ApiFeatures{
 
     filter(){
         const queryObj = {...this.queryString};
-        const excludeFields = ['page','sort','limit','fields'];
+        const excludeFields = ['page','sort','limit','fields','search'];
         excludeFields.forEach(field=> delete queryObj[field]);
 
         let queryStr = JSON.stringify(queryObj);
@@ -42,8 +42,11 @@ class ApiFeatures{
     search(){
         const queryObj = {...this.queryString};
         if(queryObj.search){
-            this.query = this.query.find({$text: {$search: queryObj.search}})
+            console.log(queryObj)
+            this.query = this.query.find({$text: {$search: queryObj.search}}).select('name image price')
+            console.log(this.query)
         }
+        console.log(this.query)
 
         return this
     }
