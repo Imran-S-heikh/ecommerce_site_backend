@@ -1,5 +1,5 @@
 const express = require('express');
-const { signUp, signIn, authenticate, checkAdmin } = require('../controllers/auth.controller');
+const { signUp, signIn, authenticate, checkAdmin, signinWithGoogle } = require('../controllers/auth.controller');
 const { updateUser, updateAdmin, getAllUser, sendUser, forgetPassword, resetPassword, userSearch, getUser, getAllAdmin } = require('../controllers/user.controller');
 
 
@@ -25,5 +25,6 @@ router.post('/login',signIn);
 router.post('/admins',getAllAdmin);
 router.post('/forgetPassword',forgetPassword);
 router.patch('/resetPassword/:token',resetPassword);
+router.post('/signinWithGoogle',signinWithGoogle);
 
 module.exports = router;
