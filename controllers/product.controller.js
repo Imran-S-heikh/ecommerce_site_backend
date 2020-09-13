@@ -8,10 +8,6 @@ const AppError = require("../utils/appError.util");
 const Order = require("../models/Orders.model");
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
 
-const [s, c] = [[100, 125], [280, 350]];
-
-
-
 
 
 exports.createProduct = catchAsync(async function (req, res, next) {
@@ -37,7 +33,6 @@ exports.createProduct = catchAsync(async function (req, res, next) {
 });
 
 exports.getProducts = catchAsync(async function (req, res, next) {
-    console.log(req.query)
     const features = new ApiFeatures(Product.find(), req.query).filter().sort().paginate().search();
     const products = await features.query;
     const count = await Product.countDocuments();
@@ -62,7 +57,6 @@ exports.getSingleProduct = catchAsync(async function (req, res, next) {
 
 exports.updateProduct = catchAsync(async function (req, res, next) {
     let imageObject = req.body.imageObject;
-    console.log(req.body)
     const newImage = req.body.image.filter((img) => !img.includes('https://'))
 
     if (newImage.length !== 0) {
@@ -95,7 +89,6 @@ exports.checkout = catchAsync(async (req, res, next) => {
     const line_items = [];
     let totalProduct = 0
     let totalPrice = 0;
-    const orderBy = '5f544cc5e676c51c34d827c9';
 
     products.map(product => {
         const count = req.body.products.filter(item => item.id == product._id)[0].quantity || 1;
@@ -121,6 +114,16 @@ exports.checkout = catchAsync(async (req, res, next) => {
 
     const order = await Order.create(orderData);
 
+    if(order){
+        try {
+            (order.products.map(item=>{
+               Product.findByIdAndUpdate(item.product,{$inc :{sold: item.quantity,quantity: -item.quantity}}).exec();
+            }))
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const session = await stripe.checkout.sessions.create({
         payment_method_types: ['card'],
         success_url: `${req.headers.origin}/paymentSuccess/${order._id}`,
@@ -129,8 +132,6 @@ exports.checkout = catchAsync(async (req, res, next) => {
         client_reference_id: String(order._id),
         line_items
     })
-
-    console.log(`${req.protocol}://${req.get('host')}`)
 
     res.status(200).json({
         status: 'success',

@@ -24,7 +24,10 @@ const productSchema = new mongoose.Schema({
     },
     brand: String,
     variantCode: String,
-    sold: Number,
+    sold: {
+        type: Number,
+        default: 0
+    },
     basePrice: Number,
     size: [{
         type: String,
@@ -51,7 +54,11 @@ const productSchema = new mongoose.Schema({
     }],
     title: String,
     variant: Boolean,
-    description: String
+    description: String,
+    createdAt: {
+        type: Date,
+        default: Date.now()
+    }
 });
 
 productSchema.index({

@@ -42,6 +42,10 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.ObjectId,
         ref: 'Product'
     }],
+    joinedAt: {
+        type: Date,
+        default: Date.now()
+    },
     totalTransaction: Number,
     transaction: Number,
     passwordResetToken: String,

@@ -29,7 +29,8 @@ exports.sendUser = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllUser = catchAsync(async (req, res, next) => {
-    const users = await User.find();
+    const features =  new ApiFeatures( User.find(),req.query).filter().sort().paginate().select();
+    const users = await features.query;
 
     res.status(200).json({
         status: 'success',

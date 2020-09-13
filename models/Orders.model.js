@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Product = require('./Product.model');
 
 const orderSchema = new mongoose.Schema({
     totalProduct: Number,
@@ -37,7 +38,7 @@ const orderSchema = new mongoose.Schema({
 orderSchema.pre(/^find/,function (next) {
     this.populate({path: 'orderBy',select: 'name email'}).populate({path: 'products.product',select: 'name image'})
     next();
-})
+});
 
 const Order = mongoose.model('Order', orderSchema);
 

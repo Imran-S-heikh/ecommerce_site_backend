@@ -6,7 +6,7 @@ const filter = require("../utils/filterObj.util");
 
 exports.getOrders = catchAsync(async (req,res,next)=>{
 
-    const features =  new ApiFeatures(Order.find(),req.query).filter().sort().paginate();
+    const features =  new ApiFeatures(Order.find(),req.query).filter().sort().paginate().select();
     const orders = await features.query;
     const count = await Order.countDocuments();
 
@@ -23,8 +23,6 @@ exports.getOrders = catchAsync(async (req,res,next)=>{
 exports.updateOrder = catchAsync(async (req,res,next)=>{
 
     const filteredBody  = filter(req.body,'deliveryStatus','paymentStatus')
-    console.log(filteredBody)
-    console.log({id: req.params.id})
 
     const order = await Order.findByIdAndUpdate(req.params.id,filteredBody,{new: true})    
 
