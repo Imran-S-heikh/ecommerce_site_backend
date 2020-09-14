@@ -129,9 +129,9 @@ exports.getMainStats = catchAsync(async (req,res,next)=>{
     res.status(200).json({
         status: 'success',
         stats: {
-            totalIncome: incomeStat[0]?.totalIncome,
-            newOrders: orderStat[0]?.newOrders,
-            newUsers: newUsers[0]?.new
+            totalIncome: incomeStat[0].totalIncome,
+            newOrders: orderStat[0].newOrders,
+            newUsers: newUsers[0].new
         }
     })
 
