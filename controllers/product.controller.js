@@ -24,7 +24,7 @@ exports.createProduct = catchAsync(async function (req, res, next) {
 
     const filteredProduct = filter(pd, ...filterBy)
 
-    const newProduct = await Product.create(filteredProduct)
+    const newProduct = await Product.create({...filteredProduct,createdAt: new Date()})
 
     res.status(200).json({
         status: 'success',
