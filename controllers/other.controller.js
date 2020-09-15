@@ -1,6 +1,7 @@
 const catchAsync = require("../utils/catchAsync.util");
 const Other = require("../models/Others.model");
 const AppError = require("../utils/appError.util");
+const { SITE_PROPERTIES } = require("../utils/keys");
 
 
 exports.createDocument = catchAsync(async (req,res,next)=>{
@@ -36,3 +37,24 @@ exports.updateDocument = catchAsync(async (req,res,next)=>{
         document
     })
 });
+
+exports.updateSiteProperties = catchAsync(async (req,res,next)=>{
+    const siteProperties = await Other.findOneAndUpdate({key: SITE_PROPERTIES},req.body);
+
+    res.status(200).json({
+        status: 'success',
+        siteProperties
+    });
+})
+
+exports.getSiteProperties = catchAsync(async (req,res,next)=>{
+    const siteProperties = await Other.findOne({key: SITE_PROPERTIES});
+    console.log({SITE_PROPERTIES})
+
+    if(!siteProperties)return next(new AppError('No Properties Found',404));
+
+    res.status(200).json({
+        status: 'success',
+        siteProperties
+    });
+})

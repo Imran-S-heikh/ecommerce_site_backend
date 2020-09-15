@@ -1,6 +1,7 @@
 const app       = require('./app');
 const mongoose  = require('mongoose');
 const defaultAdmin = require('./utils/createAdmin');
+const init = require('./utils/init');
 
 const port  = process.env.PORT || 3000;
 const DB = process.env.DB_STRING; 
@@ -13,6 +14,7 @@ mongoose.connect(DB, {
 }).then(() => {
     console.log('DB conntection establish');
     defaultAdmin();
+    init();
 }).catch(err=>console.log(err));
 
 app.listen(port,()=>{
