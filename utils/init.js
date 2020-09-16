@@ -14,6 +14,7 @@ const init = ()=> {
                 key: SITE_PROPERTIES,
                 catagories: [],
                 sizes: [],
+                productTypes: [],
                 defaultTheme: 'light'
             })
         }
