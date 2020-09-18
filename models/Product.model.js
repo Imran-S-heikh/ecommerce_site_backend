@@ -16,7 +16,7 @@ const productSchema = new mongoose.Schema({
         required: [true, 'Please give product a code']
     },
     productType: String,
-    catagory: [String],
+    catagory: String,
     tags: [String],
     quantity: {
         type: Number,
