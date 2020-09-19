@@ -6,6 +6,7 @@ const productRoute = require('./routes/product.route');
 const otherRoute = require('./routes/other.route');
 const orderRoute = require('./routes/order.route');
 const statsRoute = require('./routes/stats.route');
+const reviewRoute = require('./routes/review.route');
 const cors = require('cors');
 var bodyParser = require('body-parser')
 
@@ -40,6 +41,7 @@ app.use('/api/v1/users', userRoute);
 app.use('/api/v1/orders', orderRoute);
 app.use('/api/v1/others', otherRoute);
 app.use('/api/v1/stats', statsRoute);
+app.use('/api/v1/reviews', reviewRoute);
 
 
 app.use(globalErrorhandler)
