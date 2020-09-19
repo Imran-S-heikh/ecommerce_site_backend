@@ -6,6 +6,7 @@ const sendEmail = require("../utils/email");
 const crypto = require('crypto');
 const createToken = require("../utils/createToken");
 const ApiFeatures = require("../utils/apiFeatures");
+const uploadImage = require("../utils/upload");
 
 
 
@@ -159,5 +160,26 @@ exports.userSearch = catchAsync( async(req,res,next)=>{
     res.status(200).json({
         status: 'success',
         users
+    })
+});
+
+exports.updateProfilePicture = catchAsync( async(req,res,next)=>{
+    const img = req.body.newImage;
+    if(!img)return next(new AppError('Please provide A valid Image',400));
+
+    const url = (await uploadImage(img)).secure_url
+
+    if(!url) return next(new AppError('Failed To Upload Image',500))
+
+    const user = await User.findByIdAndUpdate(req.user._id,{avatar: url},{new: true})
+
+    if(!user) return next(new AppError('Failed To Upload Image',500))
+
+
+
+
+    res.status(200).json({
+        status: 'success',
+        user
     })
 });

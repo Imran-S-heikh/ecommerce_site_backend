@@ -253,7 +253,8 @@ exports.latestBayers = catchAsync(async(req,res,next)=>{
         {
             $project: {
                 orderedAt: 1,
-                name: '$user.name'
+                name: '$user.name',
+                avatar: '$user.avatar'
             }
         }
         
