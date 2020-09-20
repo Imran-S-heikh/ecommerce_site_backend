@@ -1,1 +1,2 @@
 exports.SITE_PROPERTIES = 'SITE_PROPERTIES';
+exports.COUPONS = 'COUPONS';

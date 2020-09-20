@@ -1,7 +1,8 @@
 const catchAsync = require("../utils/catchAsync.util");
 const Other = require("../models/Others.model");
 const AppError = require("../utils/appError.util");
-const { SITE_PROPERTIES } = require("../utils/keys");
+const { SITE_PROPERTIES, COUPONS } = require("../utils/keys");
+const filter = require("../utils/filterObj.util");
 
 
 exports.createDocument = catchAsync(async (req,res,next)=>{
@@ -56,5 +57,33 @@ exports.getSiteProperties = catchAsync(async (req,res,next)=>{
     res.status(200).json({
         status: 'success',
         siteProperties
+    });
+})
+
+exports.getCoupons = catchAsync(async (req,res,next)=>{
+    const doc = await Other.findOne({key: COUPONS});
+
+    if(!doc)return next(new AppError('No Docs Found',404));
+
+    res.status(200).json({
+        status: 'success',
+        doc
+    });
+})
+
+exports.createCoupon = catchAsync(async (req,res,next)=>{
+    const response = await Other.findOne({key: COUPONS});
+    const codes = {...response._doc}.coupons.map(item=>item.code);
+
+    if(codes.includes(req.body.code))return next(new AppError('Coupon Code Already Exist',400))
+
+    const filteredData = filter(req.body,'code','expiresIn','limit','validFor')
+    const doc = await Other.findOneAndUpdate({key: COUPONS},{$push : {coupons: filteredData }},{new: true});
+
+    if(!doc)return next(new AppError('No Docs Found',404));
+
+    res.status(200).json({
+        status: 'success',
+        doc
     });
 })

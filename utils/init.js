@@ -1,6 +1,6 @@
 const Other = require("../models/Others.model");
 const catchAsync = require("./catchAsync.util");
-const { SITE_PROPERTIES } = require("./keys");
+const { SITE_PROPERTIES, COUPONS } = require("./keys");
 
 
 
@@ -16,6 +16,14 @@ const init = ()=> {
                 sizes: [],
                 productTypes: [],
                 defaultTheme: 'light'
+            })
+        }
+    });
+    Other.findOne({key: COUPONS},(_,doc)=>{
+        if(!doc){
+            Other.create({
+                key: COUPONS,
+                coupons: []
             })
         }
     });
