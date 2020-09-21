@@ -1,5 +1,5 @@
 const express = require('express');
-const { createDocument, getAllDocument, updateDocument, updateSiteProperties, getSiteProperties, createCoupon, getCoupons } = require('../controllers/other.controller');
+const { createDocument, getAllDocument, updateDocument, updateSiteProperties, getSiteProperties, createCoupon, getCoupons, deleteCoupon } = require('../controllers/other.controller');
 
 
 const router = express.Router();
@@ -16,12 +16,10 @@ router.route('/siteProperties')
 router.route('/coupons')
       // .post(authenticate,checkModerator,createProduct)
       .post(createCoupon)
-      .get(getCoupons);
+      .get(getCoupons)
+      .delete(deleteCoupon);
     
-router.route('/:id')
-    //   .get(getSingleProduct)
-      // .patch(authenticate,checkModerator,updateProduct)
-      .patch(updateDocument)
-      .delete(/* Deactivate Certain Product*/)
+// router.route('/:code')
+      
 
 module.exports = router;

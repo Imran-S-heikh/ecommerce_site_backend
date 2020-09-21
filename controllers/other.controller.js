@@ -77,7 +77,7 @@ exports.createCoupon = catchAsync(async (req,res,next)=>{
 
     if(codes.includes(req.body.code))return next(new AppError('Coupon Code Already Exist',400))
 
-    const filteredData = filter(req.body,'code','expiresIn','limit','validFor')
+    const filteredData = filter(req.body,'code','expiresIn','limit','validFor','discount')
     const doc = await Other.findOneAndUpdate({key: COUPONS},{$push : {coupons: filteredData }},{new: true});
 
     if(!doc)return next(new AppError('No Docs Found',404));
@@ -86,4 +86,13 @@ exports.createCoupon = catchAsync(async (req,res,next)=>{
         status: 'success',
         doc
     });
+})
+
+exports.deleteCoupon = catchAsync(async (req,res,next)=>{
+    const doc = await Other.findOneAndUpdate({key: COUPONS},{$pull: {coupons: {code: req.body.code}}},{new: true});
+   
+    res.status(200).json({
+        status: 'success',
+        doc
+    })
 })

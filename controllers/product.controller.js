@@ -130,7 +130,8 @@ exports.checkout = catchAsync(async (req, res, next) => {
         cancel_url: `${req.headers.origin}`,
         customer_email: req.user.email,
         client_reference_id: String(order._id),
-        line_items
+        line_items,
+        amount_total: 500
     })
 
     res.status(200).json({

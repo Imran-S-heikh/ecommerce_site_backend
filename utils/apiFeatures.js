@@ -42,7 +42,7 @@ class ApiFeatures {
     search() {
         const queryObj = { ...this.queryString };
         if (queryObj.search) {
-            this.query = this.query.find({ $text: { $search: queryObj.search } }).select('name image price')
+            this.query = this.query.find({ $text: { $search: queryObj.search } }).select('name image price productCode')
         }
 
         return this
