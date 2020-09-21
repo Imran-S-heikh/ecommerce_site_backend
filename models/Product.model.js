@@ -39,8 +39,14 @@ const productSchema = new mongoose.Schema({
         card: [mongoose.Schema.Types.Mixed],
         original: [mongoose.Schema.Types.Mixed]
     },
-    totalStar: Number,
-    avgStar: Number,
+    totalStar: {
+        type: Number,
+        default: 0
+    },
+    totalReview: {
+        type: Number,
+        default: 0
+    },
     reviews: [{
         user: {
             type: mongoose.Schema.Types.ObjectId,

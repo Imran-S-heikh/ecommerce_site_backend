@@ -63,7 +63,6 @@ exports.newOrders = catchAsync(async (req,res,next)=>{
 });
 
 exports.getMainStats = catchAsync(async (req,res,next)=>{
-    console.log(req.body,'------------------------------------')
     const {point= new Date(),range = 'month'} = req.body;
     const incomeStat = await Order.aggregate([
         {
@@ -225,7 +224,7 @@ exports.latestBayers = catchAsync(async(req,res,next)=>{
         {
             $group: {
                 _id: '$orderBy',
-                orderedAt: { $first: '$orderedAt' },
+                orderedAt: { $last: '$orderedAt' },
             }
         },
         {

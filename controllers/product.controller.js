@@ -123,18 +123,18 @@ exports.checkout = catchAsync(async (req, res, next) => {
             console.log(error)
         }
     }
+    const paymentIntent = await stripe.paymentIntents.create({
+        amount: orderData.totalPrice * 100,
+        currency: 'usd',
+        receipt_email: req.user.email,
+        metadata: {integration_check: 'accept_a_payment'}
+    });
 
-    const session = await stripe.checkout.sessions.create({
-        payment_method_types: ['card'],
-        success_url: `${req.headers.origin}/paymentSuccess/${order._id}`,
-        cancel_url: `${req.headers.origin}`,
-        customer_email: req.user.email,
-        client_reference_id: String(order._id),
-        line_items
-    })
+    if(!paymentIntent)return next(new AppError('Failed To get Intent',500))
 
     res.status(200).json({
         status: 'success',
-        session
+        clientSecret: paymentIntent.client_secret,
+        orderId: order._id
     })
 });

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Product = require("../models/Product.model");
 const Review = require("../models/Reviews.model");
 const AppError = require("../utils/appError.util");
 const catchAsync = require("../utils/catchAsync.util");
@@ -11,6 +12,7 @@ exports.createReview = catchAsync(async(req,res,next)=>{
     if(oldReview)return next(new AppError('Already have a review on this product',400))
 
     const review = await Review.create({...filteredData,user: req.user._id});
+    Product.findByIdAndUpdate({_id: req.body.product},{$inc: {totalStar: req.body.rating,totalReview: 1}}).exec()
     
 
     res.status(200).json({
