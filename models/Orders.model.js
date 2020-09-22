@@ -4,6 +4,11 @@ const Product = require('./Product.model');
 const orderSchema = new mongoose.Schema({
     totalProduct: Number,
     totalPrice: Number,
+    totalProductPrice: Number,
+    coupon: {
+        code: String,
+        discount: Number
+    },
     products: [
         {
             product: {

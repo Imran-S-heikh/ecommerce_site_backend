@@ -6,6 +6,8 @@ const filter = require("../utils/filterObj.util");
 const mergeObject = require("../utils/mergeObject");
 const AppError = require("../utils/appError.util");
 const Order = require("../models/Orders.model");
+const isValidCoupon = require("../utils/isValidCoupon");
+const Other = require("../models/Others.model");
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
 
 
@@ -82,27 +84,47 @@ exports.updateProduct = catchAsync(async function (req, res, next) {
 exports.checkout = catchAsync(async (req, res, next) => {
     const { paymentMethod, address, country, state } = req.body;
     const products = await Product.find().where('_id').in(req.body.products.map(item => item.id)).exec();
+    
 
     if (!products) return next(new AppError('No Products Found', 404));
 
     const orderProducts = [];
     const line_items = [];
     let totalProduct = 0
-    let totalPrice = 0;
+    let totalProductPrice = 0;
+    let coupon = null;
+    let discount = 0;
 
     products.map(product => {
         const count = req.body.products.filter(item => item.id == product._id)[0].quantity || 1;
 
         const subTotal = product.price * count;
         totalProduct = totalProduct + count;
-        totalPrice = subTotal + totalPrice;
+        totalProductPrice = subTotal + totalProductPrice;
         line_items.push({name: product.name,description: product.description,images: [product.image.small[0]],amount: product.price * 100,currency: 'usd',quantity: count})
         orderProducts.push({ subTotal, quantity: count, product: product._id, price: product.price })
     });
 
+    if(req.body.couponCode){
+        const doc = await Other.findOne({
+            coupons: {
+                $elemMatch: {
+                    expiresIn: {$gte: (new Date()).toISOString()},
+                    code: req.body.couponCode
+                }
+            }
+        },{'coupons.$': 1});
+        if(doc && isValidCoupon(doc._doc.coupons[0],products)){
+            discount = doc._doc.coupons[0].discount
+            coupon = doc._doc.coupons[0];
+        }
+        console.log({isTrue: isValidCoupon(doc._doc.coupons[0],products),discount})
+    }
+
     const orderData = {
         totalProduct,
-        totalPrice,
+        totalProductPrice,
+        totalPrice: totalProductPrice - discount,
         products: orderProducts,
         orderBy: req.user._id,
         orderedAt: new Date(),
@@ -110,6 +132,10 @@ exports.checkout = catchAsync(async (req, res, next) => {
         address,
         country,
         state
+    }
+
+    if(coupon){
+        orderData.coupon = coupon
     }
 
     const order = await Order.create(orderData);

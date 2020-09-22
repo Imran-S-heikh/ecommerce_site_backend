@@ -1,5 +1,5 @@
 const express = require('express');
-const { createDocument, getAllDocument, updateDocument, updateSiteProperties, getSiteProperties, createCoupon, getCoupons, deleteCoupon } = require('../controllers/other.controller');
+const { createDocument, getAllDocument, updateDocument, updateSiteProperties, getSiteProperties, createCoupon, getCoupons, deleteCoupon, getCoupon } = require('../controllers/other.controller');
 
 
 const router = express.Router();
@@ -18,6 +18,8 @@ router.route('/coupons')
       .post(createCoupon)
       .get(getCoupons)
       .delete(deleteCoupon);
+router.post('/getCoupon',getCoupon)
+      
     
 // router.route('/:code')
       

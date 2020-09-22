@@ -71,6 +71,25 @@ exports.getCoupons = catchAsync(async (req,res,next)=>{
     });
 })
 
+exports.getCoupon = catchAsync(async (req,res,next)=>{
+    console.log(req.body.code)
+    const doc = await Other.findOne({
+        coupons: {
+            $elemMatch: {
+                expiresIn: {$gte: (new Date()).toISOString()},
+                code: req.body.code
+            }
+        }
+    },{'coupons.$': 1});
+
+    if(!doc)return next(new AppError('No Docs Found',404));
+
+    res.status(200).json({
+        status: 'success',
+        doc
+    });
+})
+
 exports.createCoupon = catchAsync(async (req,res,next)=>{
     const response = await Other.findOne({key: COUPONS});
     const codes = {...response._doc}.coupons.map(item=>item.code);
