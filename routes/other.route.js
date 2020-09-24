@@ -1,4 +1,5 @@
 const express = require('express');
+const { checkAdmin, authenticate, checkModerator } = require('../controllers/auth.controller');
 const { createDocument, getAllDocument, updateDocument, updateSiteProperties, getSiteProperties, createCoupon, getCoupons, deleteCoupon, getCoupon } = require('../controllers/other.controller');
 
 
@@ -11,13 +12,12 @@ router.route('/')
       .get(getAllDocument);
 router.route('/siteProperties')
       // .post(authenticate,checkModerator,createProduct)
-      .post(updateSiteProperties)
-      .get(getSiteProperties);
+      .post(authenticate,checkAdmin,updateSiteProperties)
+      .get(authenticate,checkAdmin,getSiteProperties);
 router.route('/coupons')
-      // .post(authenticate,checkModerator,createProduct)
-      .post(createCoupon)
-      .get(getCoupons)
-      .delete(deleteCoupon);
+      .post(authenticate,checkAdmin,createCoupon)
+      .get(authenticate,checkModerator,getCoupons)
+      .delete(authenticate,checkAdmin,deleteCoupon);
 router.post('/getCoupon',getCoupon)
       
     

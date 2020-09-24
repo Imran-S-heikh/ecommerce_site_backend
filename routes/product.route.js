@@ -8,15 +8,12 @@ const router = express.Router();
 
 router.post('/checkout',authenticate,checkout);
 router.route('/')
-// .post(authenticate,checkModerator,createProduct)
-.post(createProduct)
+.post(authenticate,checkModerator,createProduct)
 .get(getProducts);
 
 router.route('/:id')
 .get(getSingleProduct)
-// .patch(authenticate,checkModerator,updateProduct)
-.patch(updateProduct)
-.delete(/* Deactivate Certain Product*/)
+.patch(authenticate,checkModerator,updateProduct)
 
 
 module.exports = router;
