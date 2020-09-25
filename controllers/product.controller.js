@@ -8,6 +8,7 @@ const AppError = require("../utils/appError.util");
 const Order = require("../models/Orders.model");
 const isValidCoupon = require("../utils/isValidCoupon");
 const Other = require("../models/Others.model");
+const paypalCheckout = require("../utils/paypalCheckout");
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
 
 
@@ -149,18 +150,29 @@ exports.checkout = catchAsync(async (req, res, next) => {
             console.log(error)
         }
     }
-    const paymentIntent = await stripe.paymentIntents.create({
-        amount: orderData.totalPrice * 100,
-        currency: 'usd',
-        receipt_email: req.user.email,
-        metadata: {integration_check: 'accept_a_payment'}
-    });
-
-    if(!paymentIntent)return next(new AppError('Failed To get Intent',500))
-
-    res.status(200).json({
-        status: 'success',
-        clientSecret: paymentIntent.client_secret,
-        orderId: order._id
-    })
+    if(order.paymentMethod === 'stripe'){
+        const paymentIntent = await stripe.paymentIntents.create({
+            amount: orderData.totalPrice * 100,
+            currency: 'usd',
+            receipt_email: req.user.email,
+            metadata: {integration_check: 'accept_a_payment'}
+        });
+    
+        if(!paymentIntent)return next(new AppError('Failed To get Intent',500))
+    
+        res.status(200).json({
+            status: 'success',
+            clientSecret: paymentIntent.client_secret,
+            orderId: order._id
+        })
+    }else if(order.paymentMethod === 'paypal'){
+        const paypalOrderId = await paypalCheckout(orderData.totalPrice);
+        res.status(200).json({
+            status: 'success',
+            orderId: order._id,
+            paypalOrderId
+        })
+    }else{
+        return next(new AppError('Payment Method not recognised',400))
+    }
 });
