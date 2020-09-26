@@ -6,6 +6,7 @@ const createToken = require("../utils/createToken");
 const AppError = require("../utils/appError.util");
 const filter = require("../utils/filterObj.util");
 const googleOAuth = require("../utils/googleOAuth");
+const { default: fetch } = require("node-fetch");
 
 
 
@@ -102,6 +103,41 @@ exports.signinWithGoogle = catchAsync(async (req, res, next) => {
 
     if (!user) return next(new AppError('No user Found', 404));
 
+
+    const token = createToken(user._id);
+
+    res.cookie('jwt', token, {
+        expires: new Date(Date.now() + (1000 * 60 * 60)),
+        sameSite: 'none',
+        secure: true
+    });
+
+    res.status(200).json({
+        status: 'success',
+        token,
+        user
+    });
+});
+
+exports.signinWithFacebook = catchAsync(async(req,res,next)=>{
+    const {userID,accessToken} = req.body;
+    console.log(req.body)
+
+    if(!userID || !accessToken)return next(new AppError('Failed To Login with Facebook',400));
+
+    const fbUrl = `https://graph.facebook.com/v2.11/${userID}/?fields=id,name,email&access_token=${accessToken}`
+
+    const response = await fetch(fbUrl,{
+        method: 'GET'
+    }).then(res=>res.json());
+    
+
+
+    if(!response.email)return next(new AppError('No Email Found In facebook account',404))
+
+    const user = await User.findOne({ email: response.email });
+
+    if (!user) return next(new AppError('No user Found, Please Register to continue', 404));
 
     const token = createToken(user._id);
 
