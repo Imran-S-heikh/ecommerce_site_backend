@@ -13,7 +13,7 @@ router.route('/')
 router.route('/siteProperties')
       // .post(authenticate,checkModerator,createProduct)
       .post(authenticate,checkAdmin,updateSiteProperties)
-      .get(authenticate,checkAdmin,getSiteProperties);
+      .get(getSiteProperties);
 router.route('/coupons')
       .post(authenticate,checkAdmin,createCoupon)
       .get(authenticate,checkModerator,getCoupons)
