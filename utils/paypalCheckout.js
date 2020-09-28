@@ -4,7 +4,7 @@ const environment = new paypal.core.SandboxEnvironment(process.env.PAYPAL_CLIENT
 
 const client = new paypal.core.PayPalHttpClient(environment);
 
-async function paypalCheckout(amount) {
+exports.paypalCheckout = async(amount)=> {
     const request = new paypal.orders.OrdersCreateRequest();
     request.requestBody({
         "intent": "CAPTURE",
@@ -25,4 +25,12 @@ async function paypalCheckout(amount) {
     return response.result.id;
 }
 
-module.exports = paypalCheckout
+exports.paypalCapture = async(orderID)=>{
+  const request = new paypal.orders.OrdersCaptureRequest(orderID);
+  request.requestBody({});
+
+  const response = await client.execute(request);
+
+  return response;
+};
+

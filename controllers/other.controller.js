@@ -3,6 +3,7 @@ const Other = require("../models/Others.model");
 const AppError = require("../utils/appError.util");
 const { SITE_PROPERTIES, COUPONS } = require("../utils/keys");
 const filter = require("../utils/filterObj.util");
+const { paypalCapture } = require("../utils/paypalCheckout");
 
 
 exports.createDocument = catchAsync(async (req,res,next)=>{
@@ -113,5 +114,17 @@ exports.deleteCoupon = catchAsync(async (req,res,next)=>{
     res.status(200).json({
         status: 'success',
         doc
+    })
+});
+
+exports.paypalPaymentCapture = catchAsync(async (req,res,next)=>{
+    if(!req.body.orderID)return next(new AppError('Bad request',400))
+    const response = await paypalCapture(req.body.orderID);
+
+    if(response.result.status !== 'COMPLETED')return next(new AppError('Failed To Capture Payment',400))
+
+
+    res.status(200).json({
+        status: 'success',
     })
 })

@@ -8,7 +8,7 @@ const AppError = require("../utils/appError.util");
 const Order = require("../models/Orders.model");
 const isValidCoupon = require("../utils/isValidCoupon");
 const Other = require("../models/Others.model");
-const paypalCheckout = require("../utils/paypalCheckout");
+const {paypalCheckout} = require("../utils/paypalCheckout");
 const stripe = require('stripe')(process.env.STRIPE_SECRET)
 
 
